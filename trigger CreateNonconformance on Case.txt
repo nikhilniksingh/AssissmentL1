@@ -1,0 +1,14 @@
+trigger CreateNonconformance on Case (after insert , after update) {
+    
+    if(Trigger.isAfter && Trigger.isInsert ){
+        TriggerHandle.createNonconformance(Trigger.New);
+        
+    }
+    if(Trigger.isAfter && Trigger.isUpdate ){
+        TriggerHandle.UpdateNonconformance(trigger.New,trigger.Old);
+        
+    }
+   
+    
+
+}

@@ -1,0 +1,47 @@
+public class TriggerHandle {
+    
+    public Static void createNonconformance(List<Case> listOfCase){
+        List<SQX_Nonconformance__c> listOfSN = New List<SQX_Nonconformance__c>();
+        Set<Id> sqxId = new Set<Id>();
+        for(Case c : listOfCase){
+            SQX_Nonconformance__c sqx = new SQX_Nonconformance__c();
+            if(c.Type == 'Problem'){
+                sqx.SQX_NC_Reference__c=c.id;
+                sqx.Pri__c = c.Priority;
+                sqx.Title__c = c.Subject;
+                sqx.Description__c = c.Description;
+                sqx.QMS_Reference_Number__c =c.CaseNumber;
+              listOfSN.add(sqx);
+            }
+            
+        }
+        if(!listOfSN.isEmpty()){
+            upsert listOfSN;
+        } 
+    }
+        Public Static void UpdateNonconformance(List<Case> listOfCase , List<Case> ListOfCaseOld){
+        List<SQX_Nonconformance__c> listOfSN = New List<SQX_Nonconformance__c>();
+        Set<Id> sqxId = new Set<Id>();
+        for(Case c : listOfCase){
+            for(Case co: ListOfCaseOld){
+            SQX_Nonconformance__c sqx = new SQX_Nonconformance__c();
+            if(c.Type == 'Problem' && co.Type=='Problem'){
+                c.addError('Already Case Type Is Problem');
+            }
+                else{
+                sqx.SQX_NC_Reference__c=c.id;
+                sqx.Pri__c = c.Priority;
+                sqx.Title__c = c.Subject;
+                sqx.Description__c = c.Description;
+                sqx.QMS_Reference_Number__c =c.CaseNumber;
+              listOfSN.add(sqx);
+            }
+            }
+            
+        }
+        if(!listOfSN.isEmpty()){
+            upsert listOfSN;
+        } 
+    }
+
+}

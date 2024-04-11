@@ -1,0 +1,27 @@
+trigger AvoidCreatingNonconformanceWithSameCase on SQX_Nonconformance__c (before insert) {
+    
+    if(Trigger.isBefore && Trigger.isInsert){
+        Set<Id> caseId = new Set<Id>();
+        for(SQX_Nonconformance__c sq : Trigger.New){
+            if(sq.SQX_NC_Reference__c != null){
+            caseId.add(sq.SQX_NC_Reference__c);
+            }
+        }
+    
+  List<Case> listOfCase =[Select id,(Select id from Nonconformance__r) from case where Id IN : caseId];
+        Map<Id,Integer> mapId =new Map<Id,Integer>();
+        for(Case c : listOfCase){
+          mapId.put(c.Id,c.Nonconformance__r.size());
+            
+        }
+        for(SQX_Nonconformance__c sq : Trigger.New){
+            if(mapId.containsKey(sq.SQX_NC_Reference__c)){
+                if(mapId.get(sq.SQX_NC_Reference__c)>0){
+                    sq.addError('You can not Insert two Nonconformance inside Same case');
+                    
+                }
+            }
+            
+        }
+    }
+}
